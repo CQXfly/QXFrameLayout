@@ -56,11 +56,6 @@ typedef NS_ENUM(NSInteger,MXFrameLayoutDirection) {
     return self;
 }
 
-- (MXFrameLayout *)with {
-    
-    return self;
-}
-
 - (MXFrameLayout *)width {
     self.key = @"width";
     self.direction = MXFrameLayoutDirectionHorizontal;
@@ -111,14 +106,15 @@ typedef NS_ENUM(NSInteger,MXFrameLayoutDirection) {
 }
 
 -(MXFrameLayout *(^)(CGFloat))equalTo{
+    
     __weak typeof(self) weakSelf = self;
     return ^id(CGFloat value){
         switch (weakSelf.direction) {
             case MXFrameLayoutDirectionHorizontal:
-                [weakSelf.layoutHorizontal setValue:@(value) forKey:weakSelf.key];
+                [weakSelf.layoutHorizontal setValue:@(value) forKey:self.key];
                 break;
             case MXFrameLayoutDirectionVertical:
-                [weakSelf.layoutVertical setValue:@(value) forKey:weakSelf.key];
+                [weakSelf.layoutVertical setValue:@(value) forKey:self.key];
                 break;
             default:
                 break;
@@ -131,6 +127,7 @@ typedef NS_ENUM(NSInteger,MXFrameLayoutDirection) {
 
 -(MXFrameLayout *(^)(CGFloat offset))offset{
     __weak typeof(self) weakSelf = self;
+    
     return ^id(CGFloat offset){
         
         NSMutableDictionary *tempDictionary ;
@@ -152,52 +149,57 @@ typedef NS_ENUM(NSInteger,MXFrameLayoutDirection) {
     
 }
 
+- (MXFrameLayout *)with {
+    
+    return self;
+}
+
 -(void)render{
     
- 
+    
     [self.view sizeToFit];
     
-    id left = [self.layoutHorizontal objectForKey:@"left"];
-    id right = [self.layoutHorizontal objectForKey:@"right"];
-    id width = [self.layoutHorizontal objectForKey:@"width"];
-    id centerX = [self.layoutHorizontal objectForKey:@"centerX"];
+    NSNumber * left = [self.layoutHorizontal objectForKey:@"left"];
+    NSNumber * right = [self.layoutHorizontal objectForKey:@"right"];
+    NSNumber * width = [self.layoutHorizontal objectForKey:@"width"];
+    NSNumber * centerX = [self.layoutHorizontal objectForKey:@"centerX"];
     
-    id top = [self.layoutVertical objectForKey:@"top"];
-    id bottom = [self.layoutVertical objectForKey:@"bottom"];
-    id height = [self.layoutVertical objectForKey:@"height"];
-    id centerY = [self.layoutVertical objectForKey:@"centerY"];
+    NSNumber * top = [self.layoutVertical objectForKey:@"top"];
+    NSNumber * bottom = [self.layoutVertical objectForKey:@"bottom"];
+    NSNumber * height = [self.layoutVertical objectForKey:@"height"];
+    NSNumber * centerY = [self.layoutVertical objectForKey:@"centerY"];
     
-
+    
     if(left){
         self.frameLeft = [left floatValue];
         
-
+        
         if(width){
             self.frameWidth = [width floatValue];
         }
         
-   
+        
         else if(right){
             self.frameWidth = [right floatValue] - [left floatValue];
         }
         
         else{
-           
+            
         }
     }
     
-  
+    
     else if(width){
         self.frameWidth = [width floatValue];
         
-   
+        
         if(right){
             self.frameLeft = [right floatValue] - [width floatValue];
         }
         
         else{
             
-   
+            
             
         }
         
@@ -210,7 +212,7 @@ typedef NS_ENUM(NSInteger,MXFrameLayoutDirection) {
     
     
     
-
+    
     if(top){
         self.frameTop = [top floatValue];
         
@@ -219,27 +221,27 @@ typedef NS_ENUM(NSInteger,MXFrameLayoutDirection) {
             self.frameHeight = [height floatValue];
         }
         
-      
+        
         else if(bottom){
             self.frameHeight = [bottom floatValue] - [top floatValue];
         }
         
         else{
-           
+            
         }
     }
-
+    
     else if(height){
         self.frameHeight = [height floatValue];
         
-   
+        
         if(bottom){
             self.frameTop = [bottom floatValue] - [height floatValue];
         }
         
         else{
             
-      
+            
             
         }
         
@@ -253,8 +255,8 @@ typedef NS_ENUM(NSInteger,MXFrameLayoutDirection) {
     
     self.view.frame = CGRectMake(self.frameLeft,
                                  self.frameTop,
-                                 self.frameWidth > 0?self.frameWidth:self.view.width,
-                                 self.frameHeight > 0? self.frameHeight:self.view.height);
+                                 self.frameWidth >= 0 ? self.frameWidth:self.view.width,
+                                 self.frameHeight >= 0 ? self.frameHeight:self.view.height);
     
     if(centerX)
         self.view.centerX = [centerX floatValue];
